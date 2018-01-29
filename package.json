@@ -4,6 +4,9 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
+		"mocha:watch": "yon run mocha -- --watch",
+    "mocha": "mocha-webpack test.prepare.js \"app/**/*.spec.js\"",
+    "test": "yon run lint && yon run mocha",
     "lint": "eslint app/",
     "start": "webpack-dev-server",
     "build": "cross-env NODE_ENV=production webpack",
@@ -16,6 +19,7 @@
     "babel-plugin-ramda": "^1.4.3",
     "babel-plugin-transform-react-jsx": "^6.24.1",
     "babel-preset-env": "^1.6.1",
+    "babel-preset-stage-2": "^6.24.1",
     "cross-env": "^5.1.3",
     "css-loader": "^0.28.9",
     "css-mqpacker": "^6.0.2",
@@ -35,15 +39,23 @@
     "tachyons-sass": "^4.9.2",
     "uglifyjs-webpack-plugin": "^1.1.6",
     "webpack": "^3.10.0",
-    "webpack-bundle-analyzer": "^2.9.2"
+    "webpack-bundle-analyzer": "^2.9.2",
+    "yarn-or-npm": "^2.0.4"
   },
   "devDependencies": {
     "@oncomouse/eslint-config": "oncomouse/eslint-config",
-    "babel-eslint": "^8.2.1",
-    "eslint": "^4.16.0",
+    "babel-eslint": "^8.0.3",
+    "chai": "^4.1.2",
+    "eslint": "^4.13.1",
     "eslint-plugin-import": "^2.8.0",
     "eslint-plugin-jsx-a11y": "^6.0.3",
-    "eslint-plugin-react": "^7.6.1",
-    "webpack-dev-server": "^2.11.1"
+    "eslint-plugin-react": "^7.5.1",
+    "jsdom": "^11.6.1",
+    "mocha": "^5.0.0",
+    "mocha-webpack": "^1.0.1",
+    "redux-logger": "^3.0.6",
+    "sinon": "^4.2.1",
+    "webpack-dev-server": "^2.11.1",
+    "webpack-node-externals": "^1.6.0"
   }
 }
