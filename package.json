@@ -1,0 +1,49 @@
+{
+  "name": "hyperapp",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "lint": "eslint app/",
+    "start": "webpack-dev-server",
+    "build": "cross-env NODE_ENV=production webpack",
+    "analyze": "cross-env ANALYZE=1 NODE_ENV=production webpack"
+  },
+  "dependencies": {
+    "autoprefixer": "^7.2.5",
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-plugin-ramda": "^1.4.3",
+    "babel-plugin-transform-react-jsx": "^6.24.1",
+    "babel-preset-env": "^1.6.1",
+    "cross-env": "^5.1.3",
+    "css-loader": "^0.28.9",
+    "css-mqpacker": "^6.0.2",
+    "extract-text-webpack-plugin": "^3.0.2",
+    "html-webpack-plugin": "^2.30.1",
+    "hyperapp": "^1.0.2",
+    "hyperapp-effects": "^0.4.2",
+    "hyperapp-render": "^1.0.0",
+    "node-sass": "^4.7.2",
+    "noop-webpack-plugin": "^1.0.1",
+    "picostyle": "^0.2.1",
+    "postcss-clearfix": "^2.0.1",
+    "postcss-easings": "^1.0.1",
+    "postcss-loader": "^2.0.10",
+    "sass-loader": "^6.0.6",
+    "style-loader": "^0.20.1",
+    "tachyons-sass": "^4.9.2",
+    "uglifyjs-webpack-plugin": "^1.1.6",
+    "webpack": "^3.10.0",
+    "webpack-bundle-analyzer": "^2.9.2"
+  },
+  "devDependencies": {
+    "@oncomouse/eslint-config": "oncomouse/eslint-config",
+    "babel-eslint": "^8.2.1",
+    "eslint": "^4.16.0",
+    "eslint-plugin-import": "^2.8.0",
+    "eslint-plugin-jsx-a11y": "^6.0.3",
+    "eslint-plugin-react": "^7.6.1",
+    "webpack-dev-server": "^2.11.1"
+  }
+}

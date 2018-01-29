@@ -1,0 +1,37 @@
+{
+	"presets": [
+		["env", {
+			"modules": false,
+			"targets": {
+				"node": "current",
+				"browsers": "> 5%"
+			},
+			"useBuiltIns": true
+		}]
+	],
+	"plugins": [
+		"ramda",
+		["transform-react-jsx", {
+			"pragma": "h"
+		}]
+	],
+	"env": {
+		"test": {
+			"presets": [
+				["env",{
+					"targets": {
+						"node": "current",
+						"browsers": "> 5%"
+					},
+					"useBuiltIns": true
+				}]
+			]
+			, "plugins": [
+				"ramda",
+				["transform-react-jsx", {
+					"pragma": "h"
+				}]
+			]
+		}
+	}
+}
