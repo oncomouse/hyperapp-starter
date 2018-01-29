@@ -6,7 +6,7 @@ const buttonStyle = ({ color='green' }) => `${BUTTON_STYLE} ${color} b--${color}
 const Button = ({ clickSymbol, value, color }) => (
     <button
         className={buttonStyle(color||'green')}
-        onclick={event(clickSymbol)}
+        onClick={event(clickSymbol)}
     >
         {value}
     </button>

@@ -7,7 +7,7 @@ import App from './containers/App'
 const view = state => (
     <App
         state={state}
-	/>
+    />
 )
 
 withEffects(app)(state, actions, view, document.body)
