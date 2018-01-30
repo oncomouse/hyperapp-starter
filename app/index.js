@@ -10,4 +10,7 @@ const view = state => (
     />
 )
 
-withEffects(app)(state, actions, view, document.body)
+const appifier = withEffects(app);
+(process.env.NODE_ENV === 'production' ?
+    appifier
+    : require('@hyperapp/logger').default({})(appifier))(state, actions, view, document.body)
