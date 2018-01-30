@@ -15,6 +15,7 @@ const App = ({ state: { count } }) => (
         <Button
             clickSymbol={DOWN}
             value="-"
+            disabled={count <= 0}
         />
         <Button
             clickSymbol={UP}
