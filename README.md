@@ -40,3 +40,7 @@ Run `yarn build` or `npm run build` to build an optimized, production version of
 `npm run analyze`
 
 Also: `env NODE_ENV=production webpack --json > stats.json` and upload to [Webpack Visualizer](https://chrisbateman.github.io/webpack-visualizer/)
+
+## Adding Routing
+
+[Click here for instructions](router.html)
