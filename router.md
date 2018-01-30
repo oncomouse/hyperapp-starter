@@ -65,7 +65,7 @@ const unsubscribe = location.subscribe(main.location)
 You can now import `<Link>` and `<Route>` components from `@hyperapp/router`:
 
 ~~~javascript
-import { h, app } from 'hyperapp'
+import { h } from 'hyperapp'
 import { Link } from '@hyperapp/router'
 
 const Header = ({}) => (
