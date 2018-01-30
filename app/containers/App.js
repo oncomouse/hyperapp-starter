@@ -8,7 +8,7 @@ const Title = styled('h1')({
 })
 
 const App = ({ state: { count } }) => (
-    <main className="measure-l tc sans-serif ml-auto mr-auto">
+    <main class="measure-l tc sans-serif ml-auto mr-auto">
         <Title>
             {count}
         </Title>
