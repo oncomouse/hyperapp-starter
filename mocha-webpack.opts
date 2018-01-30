@@ -1,1 +1,2 @@
+-r jsdom-global/register
 --webpack-config webpack.config.test.js

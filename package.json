@@ -5,7 +5,7 @@
   "license": "MIT",
   "scripts": {
     "mocha:watch": "yon run mocha -- --watch",
-    "mocha": "mocha-webpack test.prepare.js \"app/**/*.spec.js\"",
+    "mocha": "mocha-webpack \"app/**/*.spec.js\"",
     "test": "yon run lint && yon run mocha",
     "lint": "eslint app/",
     "start": "webpack-dev-server",
