@@ -2,7 +2,7 @@
 
 To install, run `yarn add @hyperapp/router` or `npm install @hyperapp/router`.
 
-### Editing Files
+## Editing Files
 
 **`app/actions/index.js`**
 
@@ -37,6 +37,8 @@ export default state
 
 **`app/index.js`**
 
+Change to look like:
+
 ~~~javascript
 import { h, app } from 'hyperapp'
 import { withEffects } from 'hyperapp-effects'
@@ -56,4 +58,21 @@ const main = (process.env.NODE_ENV === 'production' ?
     appifier
     : require('@hyperapp/logger').default({})(appifier))(state, actions, view, document.body)
 const unsubscribe = location.subscribe(main.location)
+~~~
+
+## That's it!
+
+You can now import `<Link>` and `<Route>` components from `@hyperapp/router`:
+
+~~~javascript
+import { h, app } from 'hyperapp'
+import { Link } from '@hyperapp/router'
+
+const Header = ({}) => (
+	<nav>
+		<ul>
+			<li><Link to="/">Home</Link></li>
+		</ul>
+	</nav>
+)
 ~~~
