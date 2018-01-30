@@ -1,10 +1,10 @@
 {
-  "name": "hyperapp",
+  "name": "@oncomouse/hyperapp-starter",
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-		"mocha:watch": "yon run mocha -- --watch",
+    "mocha:watch": "yon run mocha -- --watch",
     "mocha": "mocha-webpack test.prepare.js \"app/**/*.spec.js\"",
     "test": "yon run lint && yon run mocha",
     "lint": "eslint app/",
@@ -55,6 +55,7 @@
     "mocha-webpack": "^1.0.1",
     "redux-logger": "^3.0.6",
     "sinon": "^4.2.1",
+    "synthetic-dom-events": "^0.3.0",
     "webpack-dev-server": "^2.11.1",
     "webpack-node-externals": "^1.6.0"
   }
