@@ -7,15 +7,6 @@ import Button from './Button'
 import { BUTTON_STYLE } from './Button'
 import event from 'synthetic-dom-events'
 
-/*
-	There's a bit of a rendering / updating delay when using
-	JSDOM and hyperapp, so we have to sleep in our beforeEach
-	function where we render the app.
-*/
-function sleep(millis) {
-    return new Promise(resolve => setTimeout(resolve, millis))
-}
-
 describe('components/Button', () => {
     let component
     // Create fake app:
@@ -38,14 +29,14 @@ describe('components/Button', () => {
     sinon.spy(actions, TEST)
     sinon.spy(actions, BAD)
 
-    beforeEach(async () => {
+    beforeEach((done) => {
         component = render(withEffects(app))(
             state
             , actions
             , view
             , document.body
         )
-        await sleep(1)
+        setTimeout(done, 1)
     })
     afterEach(() => {
         document.body.innerHTML = ''

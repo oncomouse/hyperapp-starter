@@ -4,15 +4,6 @@ import { withEffects } from 'hyperapp-effects'
 import { render } from 'hyperapp-render'
 import App from './App'
 
-/*
-	There's a bit of a rendering / updating delay when using
-	JSDOM and hyperapp, so we have to sleep in our beforeEach
-	function where we render the app.
-*/
-function sleep(millis) {
-    return new Promise(resolve => setTimeout(resolve, millis))
-}
-
 describe('containers/App', () => {
     let component
     // Create fake app:
@@ -20,14 +11,14 @@ describe('containers/App', () => {
     const actions = {}
     const view = state => (<App state={state} />)
 
-    beforeEach(async () => {
+    beforeEach((done) => {
         component = render(withEffects(app))(
             state
             , actions
             , view
             , document.body
         )
-        await sleep(1)
+        setTimeout(done, 1)
     })
     afterEach(() => {
         document.body.innerHTML = ''
