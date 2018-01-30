@@ -5,4 +5,7 @@ module.exports = {
 			'pragma': 'h'
 		}
 	}
+	, rules: {
+		'react/no-unknown-property': 'off'
+	}
 }
