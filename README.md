@@ -43,4 +43,4 @@ Also: `env NODE_ENV=production webpack --json > stats.json` and upload to [Webpa
 
 ## Adding Routing
 
-[Click here for instructions](router.html)
+[Click here for instructions](router.md)
