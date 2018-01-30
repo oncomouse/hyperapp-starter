@@ -41,7 +41,7 @@ describe('components/Button', () => {
     afterEach(() => {
         document.body.innerHTML = ''
     })
-    it('should mount without crashing', () => {
+    it('should render without crashing', () => {
         expect(component.toString()).to.equal(`<button className="${BUTTON_STYLE} green b--green" onclick="event,[object Object]">0</button>`)
     })
     it('should trigger a TEST event when clicked', () => {

@@ -23,7 +23,7 @@ describe('containers/App', () => {
     afterEach(() => {
         document.body.innerHTML = ''
     })
-    it('should mount without crashing', () => {
+    it('should render without crashing', () => {
         expect(component.toString()).to.be.a('string')
     })
     it('should render an <H1>', () => {
