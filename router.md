@@ -29,7 +29,7 @@ Change to look like:
 import { location } from '@hyperapp/router'
 const state = {
     count: 0
-	, location: location.state
+    , location: location.state
 }
 
 export default state
@@ -69,10 +69,10 @@ import { h } from 'hyperapp'
 import { Link } from '@hyperapp/router'
 
 const Header = ({}) => (
-	<nav>
-		<ul>
-			<li><Link to="/">Home</Link></li>
-		</ul>
-	</nav>
+    <nav>
+        <ul>
+            <li><Link to="/">Home</Link></li>
+        </ul>
+    </nav>
 )
 ~~~
