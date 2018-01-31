@@ -42,7 +42,7 @@ describe('components/Button', () => {
         document.body.innerHTML = ''
     })
     it('should render without crashing', () => {
-        expect(component.toString()).to.equal(`<button className="${BUTTON_STYLE} green b--green" onclick="event,[object Object]">0</button>`)
+        expect(component.toString()).to.equal(`<button class="${BUTTON_STYLE} green b--green" onclick="event,[object Object]">0</button>`)
     })
     it('should trigger a TEST event when clicked', () => {
         document.body.children[0].dispatchEvent(click)
