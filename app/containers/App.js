@@ -1,17 +1,15 @@
 import { h } from 'hyperapp'
 import Button from '../components/Button'
 import { DOWN, UP } from '../symbols'
-import styled from '../utilities/styled'
 
-const Title = styled('h1')({
-    color: '#19a974'
-})
+export const MAIN_STYLE = 'measure-l tc sans-serif center-ns'
+export const TITLE_STYLE = 'green'
 
 const App = ({ state: { count } }) => (
-    <main class="measure-l tc sans-serif center-ns">
-        <Title>
+    <main class={MAIN_STYLE}>
+        <h1 class={TITLE_STYLE}>
             {count}
-        </Title>
+        </h1>
         <Button
             clickSymbol={DOWN}
             value="-"
