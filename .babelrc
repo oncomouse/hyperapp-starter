@@ -1,18 +1,20 @@
 {
 	"presets": [
-		["env", {
+		["@babel/preset-env", {
 			"modules": false,
 			"targets": {
 				"node": "current",
 				"browsers": "> 5%"
 			},
-			"useBuiltIns": true
+			"useBuiltIns": "usage"
 		}]
-		, "stage-2"
+		, ["@babel/preset-stage-2", {
+			"decoratorsLegacy": true,
+		}]
 	],
 	"plugins": [
 		"ramda",
-		["transform-react-jsx", {
+		["@babel/plugin-transform-react-jsx", {
 			"pragma": "h"
 		}]
 	],
@@ -24,12 +26,12 @@
 						"node": "current",
 						"browsers": "> 5%"
 					},
-					"useBuiltIns": true
+					"useBuiltIns": "usage"
 				}]
 			]
 			, "plugins": [
 				"ramda",
-				["transform-react-jsx", {
+				["@babel/plugin-transform-react-jsx", {
 					"pragma": "h"
 				}]
 			]

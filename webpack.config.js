@@ -1,251 +1,298 @@
-const webpack = require('webpack')
-const HtmlWebpackPlugin = require('html-webpack-plugin')
-const ExtractTextPlugin = require('extract-text-webpack-plugin')
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
-const UglifyJSPlugin = require('uglifyjs-webpack-plugin')
-const noop = require('noop-webpack-plugin')
-const path = require('path')
-const fs = require('fs')
+const path = require('path');
+const fs = require('fs');
+const url = require('url');
+const webpack = require('webpack');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+const CleanWebpackPlugin = require('clean-webpack-plugin');
+const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
+const noop = require('noop-webpack-plugin');
+// For historyApiFallback:
+const history = require('connect-history-api-fallback');
+const convert = require('koa-connect');
+// For waitPage:
+const webpackServeWaitpage = require('webpack-serve-waitpage');
+const chalk = require('chalk');
 
-const { ANALYZE } = process.env
+// Read in package.json:
+const packageJSON = JSON.parse(fs.readFileSync(path.join(__dirname, 'package.json')));
 
-const nodeEnv = process.env.NODE_ENV || 'development'
-const isProd = nodeEnv === 'production'
+const nodeEnv = process.env.NODE_ENV || 'development';
+const isProd = nodeEnv === 'production';
 
-const packageJSON = JSON.parse(
-  fs.readFileSync(
-    path.join('.', 'package.json')
-  )
-)
-
+// Extract PUBLIC_URL from either CLI or package.json:
+const PUBLIC_URL = process.env.PUBLIC_URL || (
+  isProd
+  && Object.prototype.hasOwnProperty.call(packageJSON, 'homepage')
+) ? packageJSON.homepage : undefined;
+// Extract APP_TITLE from package.json:
 const APP_TITLE = (
   Object.prototype.hasOwnProperty.call(packageJSON, 'title')
-) ? packageJSON['title'] : 'My Sample App'
+) ? packageJSON.title : 'My Sample App';
+const publicPath = PUBLIC_URL ? url.parse(PUBLIC_URL).pathname : '';
 
-const postCSSplugins = function() {
-  return [
-    require('autoprefixer')({ browsers: 'last 3 versions' })
-    , require('postcss-easings')
-    , require('css-mqpacker')
-    , require('postcss-clearfix')
-  ]
-}
+const postCSSplugins = () => [
+  require('autoprefixer')({ browsers: 'last 3 versions' }), // eslint-disable-line global-require
+  require('postcss-easings'), // eslint-disable-line global-require
+  require('css-mqpacker'), // eslint-disable-line global-require
+  require('postcss-clearfix'), // eslint-disable-line global-require
+];
 
-var webpackConfig = {
-  devtool: isProd ? 'hidden-source-map' : 'eval'
-  , entry: {
-    js: isProd ? [
-			'stylesheets/global.scss'
-			, 'index'
-		] : [
-      'stylesheets/global.scss'
-      , 'index'
-    ]
-  }
-  , output: {
-    path: path.join(__dirname, 'build')
-    , filename: 'bundle.js'
-  }
-  , module: {
+const webpackConfig = {
+  mode: isProd ? 'production' : 'development',
+  devtool: isProd
+    ? 'hidden-source-map'
+    : 'inline-source-map',
+  entry: {
+    js: [
+      'index',
+    ],
+  },
+  output: {
+    path: path.join(__dirname, 'build'),
+    filename: isProd ? 'bundle.[hash].js' : 'bundle.js',
+    publicPath,
+    libraryTarget: isProd ? 'umd' : 'var',
+    // use absolute paths in sourcemaps (important for debugging via IDE)
+    devtoolModuleFilenameTemplate: '[absolute-resource-path]',
+    devtoolFallbackModuleFilenameTemplate: '[absolute-resource-path]?[hash]',
+  },
+  module: {
     rules: [
       {
-        test: /\.(jsx|js)$/
-        , exclude: /(node_modules|bower_components)/
-        , use: [
+        test: /\.js$/,
+        exclude: /node_modules/,
+        use: [
           {
-            loader: 'babel-loader'
-            , options: {
-              cacheDirectory: true
-            }
-          }
+            loader: 'babel-loader',
+            options: {
+              cacheDirectory: true,
+            },
+          },
         ],
-      }
-      /*
-				Loader code for .css files. We use style-loader in
-				development to get HMR support. In production, we use
-				ExtractTextPlugin to get a pre-built CSS file.
-			*/
-      , {
-        test: /\.css$/
-        , use: ExtractTextPlugin.extract({
-          fallback: 'style-loader'
-          , use: [
-            'css-loader'
-            , {
-              loader: 'postcss-loader'
-              , options: {
-                plugins: postCSSplugins
-              }
-            }
-          ]
-        })
-      }
-      /*
-				SASS loader code for the module files (in
-				app/stylesheets/components). These are intended to be
-				styles for individual React components, which will have a
-				unique name space.
-
-				As above (with the CSS loader), we use style-loader for
-				HMR support in development and switch to ExtractTextPlugin
-				for production.
-			*/
-      , {
-        test: /\.scss$/
-        , exclude: /global\.scss$/
-        , use: ExtractTextPlugin.extract({
-          fallback: 'style-loader'
-          , use: [
-            {
-              loader: 'css-loader'
-              , options: {
-                modules: true
-                , importLoaders: 1
-                , localIdentName: '[name]__[local]___[hash:base64:5]'
-              }
-            }
-            , {
-              loader: 'postcss-loader'
-              , options: {
-                plugins: postCSSplugins
-              }
-            }
-            , 'sass-loader'
-          ]
-        })
-      }
-      /*
-				Loader code for a universal SCSS file. These styles will
-				be (as long as you remember to import them into
-				app/index.js) loaded for every component and are not
-				uniquely namespaced as the module SCSS code above is.
-
-				This file lives in app/stylesheets/global.scss. As above,
-				we use style-loader for HMR in development and
-				ExtractTextPlugin in production.
-			*/
-      , {
-        test: /\.scss$/
-        , include: /global\.scss$/
-        , use: ExtractTextPlugin.extract({
-          fallback: 'style-loader'
-          , use: [
-            'css-loader'
-            , {
-              loader: 'postcss-loader'
-              , options: {
-                plugins: postCSSplugins
-              }
-            }
-            , 'sass-loader'
-          ]
-        })
-      }
-      /*
-				Webfont loaders for Bootsrap and the like.
-			*/
-      , { test: /\.woff(2)?(\?v=\d+\.\d+\.\d+)?$/, use: [{ loader: 'url-loader', options: { limit: 10000, mimetype: 'application/font-woff' } }] }
-      , { test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/, use: [{ loader: 'url-loader', options: { limit: 10000, mimetype: 'application/octet-stream' } }] }
-      , { test: /\.eot(\?v=\d+\.\d+\.\d+)?$/, use: 'file-loader' }, { test: /\.svg(\?v=\d+\.\d+\.\d+)?$/, use: [{ loader: 'url-loader', options: { limit: 10000, mimetype: 'application/svg-xml' } }] }
+      }, /*
+        CSS loader for the module files (in
+        app/stylesheets/components). These are intended to be
+        styles for individual React components, which will have a
+        unique name space.
+      */
+      {
+        test: /\.css$/,
+        oneOf: [
+          {
+            resourceQuery: /module/,
+            use: [
+              isProd ? MiniCssExtractPlugin.loader : 'style-loader',
+              {
+                /* CSS Modules Code */
+                loader: 'css-loader',
+                options: {
+                  modules: true,
+                  importLoaders: 1,
+                  localIdentName: '[name]__[local]___[hash:base64:5]',
+                },
+              },
+              {
+                loader: 'postcss-loader',
+                options: {
+                  plugins: postCSSplugins,
+                },
+              },
+            ],
+          }, {
+            use: [
+              isProd ? MiniCssExtractPlugin.loader : 'style-loader',
+              {
+                loader: 'css-loader',
+                options: {
+                  importLoaders: 1,
+                },
+              },
+              {
+                loader: 'postcss-loader',
+                options: {
+                  plugins: postCSSplugins,
+                },
+              },
+            ],
+          },
+        ],
+      }, /*
+        SASS loader code for the module files (in
+        app/stylesheets/components). These are intended to be
+        styles for individual React components, which will have a
+        unique name space.
+      */
+      {
+        test: /\.(?:scss|sass)$/,
+        oneOf: [
+          {
+            resourceQuery: /module/,
+            use: [
+              isProd ? MiniCssExtractPlugin.loader : 'style-loader',
+              {
+                /* CSS Modules Code */
+                loader: 'css-loader',
+                options: {
+                  modules: true,
+                  importLoaders: 2,
+                  localIdentName: '[name]__[local]___[hash:base64:5]',
+                },
+              },
+              {
+                loader: 'postcss-loader',
+                options: {
+                  plugins: postCSSplugins,
+                },
+              },
+              'sass-loader',
+            ],
+          }, {
+            use: [
+              isProd ? MiniCssExtractPlugin.loader : 'style-loader',
+              {
+                loader: 'css-loader',
+                options: {
+                  importLoaders: 2,
+                },
+              },
+              {
+                loader: 'postcss-loader',
+                options: {
+                  plugins: postCSSplugins,
+                },
+              },
+              'sass-loader',
+            ],
+          },
+        ],
+      },
     ],
-  }
-  , resolve: {
-    extensions: ['.js', '.jsx']
-    , modules: [
-      path.resolve('./app/')
-      , path.resolve('./node_modules')
-    ]
-    // Uncomment to use preact-compat
-    // Don't forget to install preact and preact-compat
-    // (and uninstall react and react-dom)
-    /*, alias: {
-      'preact-compat': 'preact-compat/dist/preact-compat'
-      , 'react': 'preact-compat'
-      , 'react-dom': 'preact-compat'
-      // Not necessary unless you consume a module using `createClass`
-      , 'create-react-class': 'preact-compat/lib/create-react-class'
-    }*/
-  }
-  , plugins: [
-    ANALYZE ? new BundleAnalyzerPlugin({
-      analyzerMode: 'server'
-      , analyzerHost: '127.0.0.1'
-      , analyzerPort: 8888
-      , openAnalyzer: true
-    }) : noop()
+  },
+  plugins: [
+    // Friendly Errors:
+    new FriendlyErrorsWebpackPlugin(),
+    // Use a static directory:
+    new CopyWebpackPlugin([
+      {
+        from: path.join(__dirname, 'assets'),
+        to: 'assets',
+      },
+    ]),
+    // Make CSS files instead of including in JS:
+    new MiniCssExtractPlugin({
+      // Options similar to the same options in webpackOptions.output
+      // both options are optional
+      filename: isProd ? '[name].[hash].css' : '[name].css',
+      chunkFilename: isProd ? '[id].[hash].css' : '[id].css',
+    }),
     // Build the HTML file without having to include it in the app:
-    , new HtmlWebpackPlugin({
-      files: {
-        css: isProd ? ['style.css'] : []
-        , js: ['bundle.js']
-      }
-      , title: APP_TITLE
-      , template: './app/template/index.ejs'
-      , chunksSortMode: 'dependency'
-      , chunks: {
-        head: {
-          css: isProd ? ['style.css'] : []
-        }
-        , main: {
-          entry: ['bundle.js']
-        }
-      }
-    })
-    , isProd ? noop() : new webpack.optimize.ModuleConcatenationPlugin()
-    // Hot Module Replacement (HMR) plugins. They only load in development:
-    , isProd ? noop() : new webpack.HotModuleReplacementPlugin()
-    , isProd ? noop() : new webpack.NamedModulesPlugin()
-    , isProd ? noop() : new webpack.NoEmitOnErrorsPlugin()
-    // Production plugins:
-    , isProd ? new webpack.LoaderOptionsPlugin({
-      minimize: true
-      , debug: false
-    }) : noop()
-    , isProd ? new UglifyJSPlugin({
-      uglifyOptions: {
-        compress: {
-          warnings: false
-        }
-        , output: {
-          comments: false
-        }
-      }
-      , sourceMap: false
-    }) : noop()
-    , new ExtractTextPlugin({
-      filename: 'style.css'
-      , allChunks: true
-    })
-    , isProd ? new webpack.optimize.AggressiveMergingPlugin() : noop()
-    , isProd ? new webpack.optimize.OccurrenceOrderPlugin : noop()
-    , new webpack.DefinePlugin({
-      'process.env': {
-        NODE_ENV: JSON.stringify(nodeEnv)
-      }
-      , APP_TITLE: JSON.stringify(APP_TITLE)
-
-    })
-    // Loader option plugin for SASS and PostCSS:
-    , new webpack.LoaderOptionsPlugin({
-      test: /\.s{0,1}css$/
-      , options: {
-        context: __dirname
-        , sassLoader: {
+    new HtmlWebpackPlugin({
+      title: APP_TITLE,
+      publicPath,
+      template: path.join(__dirname, 'app', 'template', 'index.html'),
+      chunksSortMode: 'dependency',
+      minify: {
+        collapseWhitespace: isProd,
+        collapseInlineTagWhitespace: isProd,
+        removeComments: isProd,
+        removeRedundantAttributes: isProd,
+      },
+    }),
+    // Configure SASS:
+    new webpack.LoaderOptionsPlugin({
+      test: /\.scss$/,
+      options: {
+        context: __dirname,
+        sassLoader: {
           includePaths: [
-            './node_modules'
-            , './bower_components'
-            , './app/stylesheets'
-          ]
-        }
-      }
-    })
-  ]
-  , devServer: {
-    contentBase: './app'
-    , noInfo: false
-    , historyApiFallback: true
-    , hot: true
-  }
-}
+            './node_modules',
+            './bower_components',
+            './app/stylesheets',
+          ],
+        },
+      },
+    }),
+    // Define global variables:
+    new webpack.DefinePlugin({
+      'process.env': {
+        NODE_ENV: JSON.stringify(nodeEnv),
+      },
+      APP_TITLE: JSON.stringify(APP_TITLE),
+      PUBLIC_URL: JSON.stringify(PUBLIC_URL),
+    }),
+    // Optimization & Build Plugins:
+    isProd ? new webpack.optimize.AggressiveMergingPlugin() : noop(),
+    isProd ? new webpack.optimize.OccurrenceOrderPlugin() : noop(),
+    new CleanWebpackPlugin(['build'], { verbose: false }),
+  ],
+  // Recommended Webpack optimizations:,
+  optimization: {
+    noEmitOnErrors: !isProd,
+    concatenateModules: isProd,
+    namedModules: !isProd,
+    minimizer: [
+      new UglifyJSPlugin({
+        uglifyOptions: {
+          compress: {
+            warnings: false,
+            inline: false,
+          },
+          output: {
+            comments: false,
+          },
+        },
+        sourceMap: false,
+        parallel: true,
+      }),
+      new OptimizeCSSAssetsPlugin({}),
+    ],
+    // Load all CSS files into one file:
+    splitChunks: {
+      cacheGroups: {
+        styles: {
+          name: 'styles',
+          test: /\.css$/,
+          chunks: 'all',
+          enforce: true,
+        },
+      },
+    },
+  },
+  resolve: {
+    extensions: ['.js'],
+    alias: {
+      APP: path.join(__dirname, 'app'),
+      TEST: path.join(__dirname, 'test'),
+    },
+    modules: [
+      path.join(__dirname, 'app'),
+      path.join(__dirname, 'node_modules'),
+    ],
+  },
+  serve: {
+    content: './app',
+    hot: true,
+    add: (app, middleware, options) => {
+      // For historyApiFallback:
+      app.use(convert(history({})));
+      // For serveWaitPage:
+      app.use(webpackServeWaitpage(options));
+      // For URL status update:
+      console.log(
+        chalk.blue('ℹ'),
+        `${chalk.gray('｢serve｣')}: Project is running at`,
+        chalk.blue(`http://${options.host}:${options.port}`),
+      );
+      console.log(
+        chalk.blue('ℹ'),
+        chalk.gray('｢serve｣ : Server URI copied to clipboard'),
+      );
+    },
+  },
+};
 
-module.exports = webpackConfig
+module.exports = webpackConfig;

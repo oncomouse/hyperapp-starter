@@ -20,26 +20,8 @@ export default function loadPolyfills(cb) {
 		}, 'Intl');
 	});*/
 
-    const fillCoreJs = () => new Promise((resolve) => {
-        if (
-            'startsWith' in String.prototype &&
-			'endsWith' in String.prototype &&
-			'includes' in Array.prototype &&
-			'Symbol' in window &&
-			'assign' in Object &&
-			'keys' in Object
-        ) return resolve()
-
-        require.ensure([], () => {
-            require('core-js')
-
-            resolve()
-        }, 'core-js')
-    })
-
     const doIt = () => Promise.all([
-        fillCoreJs()
-        , fillFetch()
+        fillFetch()
         //, fillIntl()
     ]).then()
 
