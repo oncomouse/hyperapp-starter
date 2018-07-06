@@ -72,6 +72,7 @@ const webpackConfig = {
               cacheDirectory: true,
             },
           },
+          'eslint-loader'
         ],
       }, /*
         CSS loader for the module files (in
