@@ -4,15 +4,12 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "mocha:watch": "yon run mocha -- --watch",
-    "mocha": "mocha-webpack \"app/**/*.spec.js\"",
-    "test": "yon run lint && yon run mocha",
+    "test": "yon run lint && yon run karma",
     "karma:watch": "yon run \"karma -- --single-run=false\"",
     "karma": "cross-env NODE_ENV=test karma start test/unit/karma.conf.js",
     "lint": "eslint app/",
     "start": "webpack-serve --config=webpack.config.js --log-level=silent",
-    "build": "cross-env NODE_ENV=production webpack",
-    "analyze": "cross-env ANALYZE=1 NODE_ENV=production webpack"
+    "build": "cross-env NODE_ENV=production webpack"
   },
   "dependencies": {
     "@babel/core": "^7.0.0-beta.51",
