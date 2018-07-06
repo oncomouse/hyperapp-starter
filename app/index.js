@@ -1,5 +1,6 @@
 import { h, app } from 'hyperapp';
 import { withEffects } from 'hyperapp-effects';
+import { withLogger } from '@hyperapp/logger';
 import actions from './actions';
 import state from './state';
 import App from './containers/App';
@@ -11,11 +12,5 @@ const view = s => (
   />
 );
 
-const appifier = withEffects(app);
-// let main;
-loadPolyfills(() => {
-  (process.env.NODE_ENV === 'production'
-    ? appifier
-    // eslint-disable-next-line global-require
-    : require('@hyperapp/logger').default({})(appifier))(state, actions, view, document.body);
-});
+const appifier = process.env.NODE_ENV === 'production' ? withEffects(app) : withLogger(withEffects(app));
+loadPolyfills(() => appifier(state, actions, view, document.body));
