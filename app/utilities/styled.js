@@ -1,6 +1,6 @@
-import { h } from 'hyperapp'
-import picostyle from 'picostyle'
+import { h } from 'hyperapp';
+import picostyle from 'picostyle';
 
-const styled = picostyle(h)
+const styled = picostyle(h);
 
-export default styled
+export default styled;

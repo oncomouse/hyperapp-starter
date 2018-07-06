@@ -1,40 +1,41 @@
+/* eslint-disable global-require */
 export default function loadPolyfills(cb) {
-    const fillFetch = () => new Promise((resolve) => {
-        if ('fetch' in window) return resolve()
+  const fillFetch = () => new Promise((resolve) => {
+    if ('fetch' in window) return resolve();
 
-        require.ensure([], () => {
-            require('whatwg-fetch')
+    return require.ensure([], () => {
+      require('whatwg-fetch');
 
-            resolve()
-        }, 'fetch')
-    })
+      return resolve();
+    }, 'fetch');
+  });
 
-    /*const fillIntl = () => new Promise((resolve) => {
-		if ('Intl' in window) return resolve();
+  /* const fillIntl = () => new Promise((resolve) => {
+    if ('Intl' in window) return resolve();
 
-		require.ensure([], () => {
-			require('intl');
-			require('intl/locale-data/jsonp/en.js');
+    require.ensure([], () => {
+      require('intl');
+      require('intl/locale-data/jsonp/en.js');
 
-			resolve();
-		}, 'Intl');
-	});*/
+      resolve();
+    }, 'Intl');
+  }); */
 
-    const doIt = () => Promise.all([
-        fillFetch()
-        //, fillIntl()
-    ]).then()
+  const doIt = () => Promise.all([
+    fillFetch(),
+    // , fillIntl()
+  ]).then();
 
-    if (!window.Promise) {
-        // Load Promise
-        require.ensure([], () => {
-            const PolyfilledPromise = require('promise-polyfill')
+  if (!window.Promise) {
+    // Load Promise
+    require.ensure([], () => {
+      const PolyfilledPromise = require('promise-polyfill');
 
-            window.Promise = PolyfilledPromise
+      window.Promise = PolyfilledPromise;
 
-            doIt().then(cb)
-        }, 'promises')
-    } else {
-        doIt().then(cb)
-    }
+      doIt().then(cb);
+    }, 'promises');
+  } else {
+    doIt().then(cb);
+  }
 }
