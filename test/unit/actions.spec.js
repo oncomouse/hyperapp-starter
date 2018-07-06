@@ -1,6 +1,6 @@
 import { expect } from 'chai'
-import { DOWN, UP } from '../symbols'
-import actions from './'
+import { DOWN, UP } from 'APP/symbols'
+import actions from 'APP/actions'
 describe('actions/index.js', () => {
     it('should add one to count when UP', () => {
         const state = {

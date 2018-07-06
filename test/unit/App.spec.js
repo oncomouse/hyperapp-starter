@@ -1,8 +1,8 @@
 import { h, app } from 'hyperapp'
 import { expect } from 'chai'
 import { withEffects } from 'hyperapp-effects'
-import { render } from 'hyperapp-render'
-import App from './App'
+import { withRender } from '@hyperapp/render'
+import App from 'APP/containers/App'
 
 describe('containers/App', () => {
     let component
@@ -12,7 +12,7 @@ describe('containers/App', () => {
     const view = state => (<App state={state} />)
 
     beforeEach((done) => {
-        component = render(withEffects(app))(
+        component = withRender(withEffects(app))(
             state
             , actions
             , view

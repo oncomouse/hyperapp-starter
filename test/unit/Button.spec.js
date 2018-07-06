@@ -2,10 +2,10 @@ import { h, app } from 'hyperapp'
 import { expect } from 'chai'
 import sinon from 'sinon'
 import { withEffects } from 'hyperapp-effects'
-import { render } from 'hyperapp-render'
-import Button from './Button'
-import { BUTTON_STYLE } from './Button'
-import event from 'synthetic-dom-events'
+import { withRender } from '@hyperapp/render'
+import Button from 'APP/components/Button'
+import { BUTTON_STYLE } from 'APP/components/Button'
+import event from 'TEST/vendor/synthetic-dom-events'
 
 describe('components/Button', () => {
     let component
@@ -30,7 +30,7 @@ describe('components/Button', () => {
     sinon.spy(actions, BAD)
 
     beforeEach((done) => {
-        component = render(withEffects(app))(
+        component = withRender(withEffects(app))(
             state
             , actions
             , view

@@ -7,9 +7,9 @@
 				"browsers": "> 5%"
 			},
 			"useBuiltIns": "usage"
-		}]
-		, ["@babel/preset-stage-2", {
-			"decoratorsLegacy": true,
+		}],
+		["@babel/preset-stage-2", {
+			"decoratorsLegacy": true
 		}]
 	],
 	"plugins": [
@@ -17,24 +17,5 @@
 		["@babel/plugin-transform-react-jsx", {
 			"pragma": "h"
 		}]
-	],
-	"env": {
-		"test": {
-			"presets": [
-				["env",{
-					"targets": {
-						"node": "current",
-						"browsers": "> 5%"
-					},
-					"useBuiltIns": "usage"
-				}]
-			]
-			, "plugins": [
-				"ramda",
-				["@babel/plugin-transform-react-jsx", {
-					"pragma": "h"
-				}]
-			]
-		}
-	}
+	]
 }
