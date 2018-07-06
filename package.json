@@ -10,7 +10,7 @@
     "karma:watch": "yon run \"karma -- --single-run=false\"",
     "karma": "cross-env NODE_ENV=test karma start test/unit/karma.conf.js",
     "lint": "eslint app/",
-    "start": "webpack-serve",
+    "start": "webpack-serve --config=webpack.config.js --log-level=silent",
     "build": "cross-env NODE_ENV=production webpack",
     "analyze": "cross-env ANALYZE=1 NODE_ENV=production webpack"
   },
