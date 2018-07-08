@@ -1,16 +1,35 @@
-import { h, app } from 'hyperapp';
-import { withEffects } from 'hyperapp-effects';
-import { withLogger } from '@hyperapp/logger';
-import actions from './actions';
-import state from './state';
-import App from './containers/App';
-import loadPolyfills from './utilities/loadPolyfills';
+import { h, app } from 'hyperapp'
+import { withFx } from '@hyperapp/fx'
+import { withLogger } from '@hyperapp/logger'
+import { withContext } from 'hyperapp-context'
+import { location } from '@hyperapp/router'
+import {
+  compose,
+  ifElse,
+  always,
+  identity,
+} from 'ramda'
+import actions from './actions'
+import state from './state'
+import Router from './router'
+import loadPolyfills from './utilities/loadPolyfills'
 
-const view = s => (
-  <App
-    state={s}
-  />
-);
+const dressApp = compose(
+  ifElse(always(process.env.NODE_ENV === 'production'), identity, withLogger),
+  withContext,
+  withFx,
+)
+const view = state => (context, setContext) => {
+  setContext({
+    count: state.count,
+    location: state.location,
+  })
+  return (
+    <Router />
+  )
+}
 
-const appifier = process.env.NODE_ENV === 'production' ? withEffects(app) : withLogger(withEffects(app));
-loadPolyfills(() => appifier(state, actions, view, document.body));
+loadPolyfills(() => {
+  const main = dressApp(app)(state, actions, view, document.body)
+  location.subscribe(main.location)
+})

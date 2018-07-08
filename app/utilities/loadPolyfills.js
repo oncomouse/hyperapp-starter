@@ -1,14 +1,14 @@
 /* eslint-disable global-require */
 export default function loadPolyfills(cb) {
   const fillFetch = () => new Promise((resolve) => {
-    if ('fetch' in window) return resolve();
+    if ('fetch' in window) return resolve()
 
     return require.ensure([], () => {
-      require('whatwg-fetch');
+      require('whatwg-fetch')
 
-      return resolve();
-    }, 'fetch');
-  });
+      return resolve()
+    }, 'fetch')
+  })
 
   /* const fillIntl = () => new Promise((resolve) => {
     if ('Intl' in window) return resolve();
@@ -24,18 +24,18 @@ export default function loadPolyfills(cb) {
   const doIt = () => Promise.all([
     fillFetch(),
     // , fillIntl()
-  ]).then();
+  ]).then()
 
   if (!window.Promise) {
     // Load Promise
     require.ensure([], () => {
-      const PolyfilledPromise = require('promise-polyfill');
+      const PolyfilledPromise = require('promise-polyfill')
 
-      window.Promise = PolyfilledPromise;
+      window.Promise = PolyfilledPromise
 
-      doIt().then(cb);
-    }, 'promises');
+      doIt().then(cb)
+    }, 'promises')
   } else {
-    doIt().then(cb);
+    doIt().then(cb)
   }
 }
